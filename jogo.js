@@ -81,6 +81,8 @@ const planoDeFundo= {   //objeto que representa o chao conforme medidas de pixel
     }
 
 }
+///////////////////===================================  flappyBird  ========================================///////////
+// [flappyBird]
 
 const flappyBird = {   //objeto que representa o passaro conforme medidas de pixels em cima da imagem sprites
 
@@ -113,19 +115,98 @@ const flappyBird = {   //objeto que representa o passaro conforme medidas de pix
 
 }
 
+
+///////////////////===================================  MensagemGetReady  ========================================///////////
+// [flappyBird]
+
+const messageGetReady = {   //objeto que representa o passaro conforme medidas de pixels em cima da imagem sprites
+
+    spriteX: 134,
+    spriteY: 0,
+    largura: 174,
+    altura: 154,
+    x: (canvas.width / 2) -174 / 2 ,
+    y: 50,
+    desenha(){ //funcao dentro do objeto = "function desenha()" . a cada FPS ele chama o loop onde vai indicar o objeto e posicao 
+        contexto.drawImage( 
+            sprites, 
+            messageGetReady.spriteX, messageGetReady.spriteY, // define a posicao inicial do passaro do arquivo sprites - sprite x, sprite y
+            messageGetReady.largura, messageGetReady.altura, //refere-se ao tamanho da area da imagem que eu quero (tamanho do recorte)
+            messageGetReady.x, messageGetReady.y,
+            messageGetReady.largura, messageGetReady.altura,
+        
+        );
+
+    }
+
+}
+
+
+// [Telas]
+
+let telaAtiva = {}; // let pois o valor eh sempre alterado
+function mudaParaTela(novaTela){ // funcao que vai mudar a tela
+    telaAtiva = novaTela; // quando iniciar o jogo vai pegar a tela ativa e jogar para nova tela
+
+}
+
+const Telas = {    // a tela contem as coisas que atualizam nela
+    INICIO: { //OBJETO DENTRO DA TELA DE INICIO
+        desenha() {
+            planoDeFundo.desenha();
+            chao.desenha();
+            flappyBird.desenha();
+            messageGetReady.desenha();
+        },
+
+        click(){ // faz com que haja a troca da tela conforme click na tela
+            mudaParaTela(Telas.Jogo);
+
+        },
+
+        atualiza() {
+            
+        }
+
+
+    }
+};
+
+Telas.Jogo = { // o jogo contem as coisas que atualizam nele
+    desenha(){
+        planoDeFundo.desenha();
+        chao.desenha();
+        flappyBird.desenha();
+    },
+    atualiza() {
+        flappyBird.atualiza();
+
+    }
+};
+
+
+
+
+
+
+
+
 function loop() {
-    planoDeFundo.desenha();
-    chao.desenha();
-    flappyBird.desenha();
-    flappyBird.atualiza();
-    
+   
+    telaAtiva.desenha(); //loop vai acessar variavel telaAtiva e vai passar a considerar qual desenho do atualiza q ele vai considerar
+    telaAtiva.atualiza();
 
     requestAnimationFrame(loop); //o request vai chamar
 
 
 }
     
+window.addEventListener("click",function(){ // verifica quando houve click na janela do navegador; function cada tela tem um tipo de comportamento
+    if(telaAtiva.click){
+        telaAtiva.click();
+        
+    }
+});
 
-
-
+mudaParaTela(Telas.INICIO);
 loop(); //executando a funcao
