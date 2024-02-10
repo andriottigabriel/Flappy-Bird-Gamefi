@@ -1,0 +1,28 @@
+<!DOCTYPE html> <!-- Declara o tipo de documento HTML -->
+<html lang="en"> <!-- Abertura da tag HTML com o atributo de idioma definido como inglês -->
+<head>
+    <meta charset="UTF-8"> <!-- Define o conjunto de caracteres do documento como UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Define as configurações de viewport para dispositivos móveis -->
+    <title>Flappy Bird - </title> <!-- Define o título da página exibido na guia do navegador -->
+</head>
+<body>
+    <canvas id="game-canvas" width="320" height="480"></canvas> <!-- Define um elemento <canvas> com um ID de "game-canvas" e dimensões de largura 320px e altura 480px -->
+    <style>
+        /* Define estilos para o corpo da página */
+        body {
+          min-height: 100vh; /* Define a altura mínima do corpo como 100% da altura da viewport */
+          display: flex; /* Define o layout flexível */
+          justify-content: center; /* Centraliza o conteúdo horizontalmente */
+          align-items: center; /* Centraliza o conteúdo verticalmente */
+        }
+        /* Define estilos para o elemento canvas */
+        canvas {
+          border: 1px solid #000; /* Define uma borda preta de 1px */
+          display: block; /* Exibe o elemento como bloco */
+          margin: 0 auto; /* Define margens automáticas para centralizar horizontalmente */
+        }
+    </style>
+
+    <script src="./jogo.js"></script> <!-- Importa um arquivo de script externo chamado "jogo.js" -->
+</body>
+</html>
