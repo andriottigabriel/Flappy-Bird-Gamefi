@@ -1,5 +1,7 @@
 console.log("Flappy Bird Gamefi")
 
+const som_HIT = new Audio();
+som_HIT.src ='./efeitos/hit.wav';
 
 const sprites = new Image();// Cria uma nova instância da classe Image para carregar os sprites
 sprites.src = './sprites.png'; // Define o caminho da imagem de sprites
@@ -10,40 +12,75 @@ const canvas = document.querySelector('canvas'); // Seleciona o elemento canvas 
 const contexto = canvas.getContext('2d');// Obtém o contexto de renderização 2D do canvas
 
 
+function fazColisao(flappyBird, chao){  //funcao colisao
+    const flappyBirdY = flappyBird.y + flappyBird.altura // quando tocar na altura da direcao do chao = flappyBird.y + flappyBird.altura
+    const chaoY = chao.y;
+
+    if (flappyBirdY >= chaoY){ // quando a localizacao do passaro for maior ou igual a localizacao do chao, eh uma colisao
+        return true;
+
+    }
+    return false; //caso contrario retorna falso
+
+}
+
+
 ///////////////////===================================  chao  ========================================//////////////////////
 
 //  [chao]
-const chao= {   //objeto que representa o chao conforme medidas de pixels em cima da imagem sprites
 
-    spriteX: 0,
-    spriteY: 610,
-    largura: 224,
-    altura: 112,
-    x: 0,
-    y: canvas.height -112, //onde o chao vai aparecer na tela do jogo canvas.height pega o total e subtrai  112
+function criaChao() {
+    const chao= {   //objeto que representa o chao conforme medidas de pixels em cima da imagem sprites
 
-    desenha(){ //funcao dentro do objeto = "function desenha()" . a cada FPS ele chama o loop onde vai indicar o objeto e posicao 
-        contexto.drawImage( 
-            sprites, 
-            chao.spriteX, chao.spriteY, // define a posicao inicial do passaro do arquivo sprites - sprite x, sprite y
-            chao.largura, chao.altura, //refere-se ao tamanho da area da imagem que eu quero (tamanho do recorte)
-            chao.x, chao.y,
-            chao.largura, chao.altura,
-        
-        );
+        spriteX: 0,
+        spriteY: 610,
+        largura: 224,
+        altura: 112,
+        x: 0,
+        y: canvas.height -112, //onde o chao vai aparecer na tela do jogo canvas.height pega o total e subtrai  112
+        atualiza (){
+            const movimentoDoChao = 1; //para cada quadro o chao vai mover 1px
 
-        contexto.drawImage(  // repete pois a imagem fica pequena na tela e para repetir eh usado a
-            sprites, 
-            chao.spriteX, chao.spriteY, // define a posicao inicial do passaro do arquivo sprites - sprite x, sprite y
-            chao.largura, chao.altura, //refere-se ao tamanho da area da imagem que eu quero (tamanho do recorte)
-            (chao.x + chao.largura) , chao.y, // + chao.largura desloca a imagem para a direita para deslocar um pousco
-            chao.largura, chao.altura,
-        
-        );
+            
+            const repeteEm = chao.largura / 2;//quando que o chao vai se repetir
+            const movimentacao = chao.x - movimentoDoChao; //a movimentacao de fato
+           // console.log("atualizac chao"); //debug 
 
+           // console.log('[chao.x ] ', chao.x ); //debug
+           //console.log('[repeteEm ] ', repeteEm); //debug
+           // console.log('[movimentacao ] ', movimentacao % repeteEm ); // DEBUG // quando pego o resto da divisao nunca vai ficar maior que o numero base q estamos usando para dividir, portanto ele sempre vai reduzindo o valor de movimentacao e atela nao acaba
+
+           chao.x = movimentacao % repeteEm; // quando pego o resto da divisao nunca vai ficar maior que o numero base q estamos usando para dividir, portanto ele sempre vai reduzindo o valor de movimentacao e atela nao acaba
+        },
+    
+        desenha(){ //funcao dentro do objeto = "function desenha()" . a cada FPS ele chama o loop onde vai indicar o objeto e posicao 
+            contexto.drawImage( 
+                sprites, 
+                chao.spriteX, chao.spriteY, // define a posicao inicial do passaro do arquivo sprites - sprite x, sprite y
+                chao.largura, chao.altura, //refere-se ao tamanho da area da imagem que eu quero (tamanho do recorte)
+                chao.x, chao.y,
+                chao.largura, chao.altura,
+            
+            );
+    
+            contexto.drawImage(  // repete pois a imagem fica pequena na tela e para repetir eh usado a
+                sprites, 
+                chao.spriteX, chao.spriteY, // define a posicao inicial do passaro do arquivo sprites - sprite x, sprite y
+                chao.largura, chao.altura, //refere-se ao tamanho da area da imagem que eu quero (tamanho do recorte)
+                (chao.x + chao.largura) , chao.y, // + chao.largura desloca a imagem para a direita para deslocar um pousco
+                chao.largura, chao.altura,
+            
+            );
+    
+        }
+    
     }
+    return chao; // Retorna o objeto chao criado
 
-}
+
+};
+
+
 ///////////////////===================================  plano de fundo  ========================================///////////
 
 //  [plano de fundo]
@@ -78,46 +115,74 @@ const planoDeFundo= {   //objeto que representa o chao conforme medidas de pixel
         
         );
 
-    }
+    },
 
-}
+};
+
 ///////////////////===================================  flappyBird  ========================================///////////
 // [flappyBird]
 
-const flappyBird = {   //objeto que representa o passaro conforme medidas de pixels em cima da imagem sprites
+function criaFlappyBird(){ //criado funcao flappy bird para sempre que reiniciar o jogo ele zera todas as infos q foram gerada ex: gravidade, velocidade, posicao
+    const flappyBird = {   //objeto que representa o passaro conforme medidas de pixels em cima da imagem sprites
+        spriteX: 0,
+        spriteY: 0,
+        largura: 33,
+        altura: 24,
+        x: 10,
+        y: 50,
+        gravidade: 0.25, //gravidade do jogo
+        velocidade: 0, //velocidade do jogo
+        pulo: 4.6,
+     
+        pula(){ ////////// PULA
+            console.log('devo pular!!!')
+    
+            //console.log('[antes]', flappyBird.velocidade); //para debug
+           flappyBird.velocidade = - flappyBird.pulo; // reset da gravidade e velocidade
+           // console.log('[depois]', flappyBird.velocidade); //para debug
+        },
+    
+        atualiza(){
+            if(fazColisao(flappyBird, globais.chao)){
+                console.log('Fez colisaaaao'); //debug
+                som_HIT.play(); //WEB AUDIO API
 
-    spriteX: 0,
-    spriteY: 0,
-    largura: 33,
-    altura: 24,
-    x: 10,
-    y: 50,
-    gravidade: 0.25, //gravidade do jogo
-    velocidade: 0, //velocidade do jogo
+                setTimeout(() => { //fez a colisao e tem um delay para a transicao de tela
 
-    atualiza(){
-        flappyBird.velocidade = flappyBird.velocidade + flappyBird.gravidade; // soma a velocidade com gravidade para aumentar dificudade do jogo
-        console.log(flappyBird.velocidade);
-        flappyBird.y = flappyBird.y + flappyBird.velocidade ; // desloca 1 
-    },
-
-    desenha(){ //funcao dentro do objeto = "function desenha()" . a cada FPS ele chama o loop onde vai indicar o objeto e posicao 
-        contexto.drawImage( 
-            sprites, 
-            flappyBird.spriteX, flappyBird.spriteY, // define a posicao inicial do passaro do arquivo sprites - sprite x, sprite y
-            flappyBird.largura, flappyBird.altura, //refere-se ao tamanho da area da imagem que eu quero (tamanho do recorte)
-            flappyBird.x, flappyBird.y,
-            flappyBird.largura, flappyBird.altura,
-        
-        );
-
+                }, 500);
+    
+                mudaParaTela(Telas.INICIO) //quando tiver a colisao ele muda para tela inicio para iniciar o jogo novamente
+                return; //return para que o codigo de baixo n'ao seja mais executado
+            }
+    
+    
+            flappyBird.velocidade = flappyBird.velocidade + flappyBird.gravidade; // soma a velocidade com gravidade para aumentar dificudade do jogo
+            //console.log(flappyBird.velocidade); //debug para ver a velocidade aumentando
+            flappyBird.y = flappyBird.y + flappyBird.velocidade ; // desloca 1 
+        },
+    
+        desenha(){ //funcao dentro do objeto = "function desenha()" . a cada FPS ele chama o loop onde vai indicar o objeto e posicao 
+            contexto.drawImage( 
+                sprites, 
+                flappyBird.spriteX, flappyBird.spriteY, // define a posicao inicial do passaro do arquivo sprites - sprite x, sprite y
+                flappyBird.largura, flappyBird.altura, //refere-se ao tamanho da area da imagem que eu quero (tamanho do recorte)
+                flappyBird.x, flappyBird.y,
+                flappyBird.largura, flappyBird.altura,
+            
+            );
+    
+        }
+    
     }
+    return flappyBird;
 
 }
 
 
+
+
 ///////////////////===================================  MensagemGetReady  ========================================///////////
-// [flappyBird]
+// [MensagemGetReady]
 
 const messageGetReady = {   //objeto que representa o passaro conforme medidas de pixels em cima da imagem sprites
 
@@ -138,24 +203,37 @@ const messageGetReady = {   //objeto que representa o passaro conforme medidas d
         );
 
     }
+   
 
 }
 
 
-// [Telas]
+//////////////======================================= [Telas]===============================////////////////////
 
+const globais = {}; //globais eh objeto
 let telaAtiva = {}; // let pois o valor eh sempre alterado
 function mudaParaTela(novaTela){ // funcao que vai mudar a tela
     telaAtiva = novaTela; // quando iniciar o jogo vai pegar a tela ativa e jogar para nova tela
+
+    if(telaAtiva.inicializa) {
+        telaAtiva.inicializa();
+        
+     }
 
 }
 
 const Telas = {    // a tela contem as coisas que atualizam nela
     INICIO: { //OBJETO DENTRO DA TELA DE INICIO
+        inicializa(){ //
+            globais.flappyBird = criaFlappyBird();  //acessa 
+            globais.chao = criaChao();
+        },
+
+
         desenha() {
             planoDeFundo.desenha();
-            chao.desenha();
-            flappyBird.desenha();
+            globais.chao.desenha();
+            globais.flappyBird.desenha();
             messageGetReady.desenha();
         },
 
@@ -165,6 +243,7 @@ const Telas = {    // a tela contem as coisas que atualizam nela
         },
 
         atualiza() {
+            globais.chao.atualiza();
             
         }
 
@@ -172,14 +251,24 @@ const Telas = {    // a tela contem as coisas que atualizam nela
     }
 };
 
+
+//////////////======================================= [Telas JOGO]===============================////////////////////
 Telas.Jogo = { // o jogo contem as coisas que atualizam nele
     desenha(){
         planoDeFundo.desenha();
-        chao.desenha();
-        flappyBird.desenha();
+        globais.chao.desenha();
+        globais.flappyBird.desenha();
+
     },
+
+    click(){ // faz com que haja a troca da tela conforme click na tela
+        globais.flappyBird.pula();
+
+    },
+
     atualiza() {
-        flappyBird.atualiza();
+        globais.flappyBird.atualiza();
+        globais.chao.atualiza();
 
     }
 };
