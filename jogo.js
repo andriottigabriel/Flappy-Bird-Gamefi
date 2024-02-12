@@ -1,5 +1,6 @@
 console.log("Flappy Bird Gamefi")
 
+let frames = 0; //declarando como 0
 const som_HIT = new Audio();
 som_HIT.src ='./efeitos/hit.wav';
 
@@ -130,21 +131,23 @@ function criaFlappyBird(){ //criado funcao flappy bird para sempre que reiniciar
         altura: 24,
         x: 10,
         y: 50,
-        gravidade: 0.25, //gravidade do jogo
-        velocidade: 0, //velocidade do jogo
+        
         pulo: 4.6,
      
         pula(){ ////////// PULA
-            console.log('devo pular!!!')
+           // console.log('devo pular!!!'); //debug
     
             //console.log('[antes]', flappyBird.velocidade); //para debug
            flappyBird.velocidade = - flappyBird.pulo; // reset da gravidade e velocidade
            // console.log('[depois]', flappyBird.velocidade); //para debug
         },
-    
+
+        gravidade: 0.25, //gravidade do jogo
+        velocidade: 0, //velocidade do jogo
+
         atualiza(){
             if(fazColisao(flappyBird, globais.chao)){
-                console.log('Fez colisaaaao'); //debug
+               // console.log('Fez colisaaaao'); //debug
                 som_HIT.play(); //WEB AUDIO API
 
                 setTimeout(() => { //fez a colisao e tem um delay para a transicao de tela
@@ -160,11 +163,46 @@ function criaFlappyBird(){ //criado funcao flappy bird para sempre que reiniciar
             //console.log(flappyBird.velocidade); //debug para ver a velocidade aumentando
             flappyBird.y = flappyBird.y + flappyBird.velocidade ; // desloca 1 
         },
+
+        movimentos: [
+            { spriteX: 0 , spriteY: 0 }, // Bird asa pra cima , mov1
+            { spriteX: 0 , spriteY: 26 }, // Bird asa pro meio, mov2
+            { spriteX: 0 , spriteY: 52 }, // Bird asa pra baixo, mov3
+            { spriteX: 0 , spriteY: 26 }, // Bird asa pro meio, mov4
+        ],
+
+        frameAtual: 0, //movimento das asas
+        atualizaOFrameAtual(){ //para cada vez que entra a funcao desenha, ele incrementa o frameAtual
+            const intervaloDeFrame = 10; // A cada 10 frames eu indico qual movimento do passaro que quero
+            const passouOIntervalo = frames % intervaloDeFrame === 0; // frames pelo modulo(%) pelo intervaloDeFrames // limitando o numero// ===0 para limitar
+           // console.log(intervaloDeFrame) //Debug
+
+            if(passouOIntervalo) {
+
+            
+            const baseDoIncremento = 1;
+            const incremento = baseDoIncremento + flappyBird.frameAtual;
+            const baseRepeticao = flappyBird.movimentos.length; //a baseRepeticao eh o tamanho da quantidade de movimento q temos = 4 movimentos 
+            flappyBird.frameAtual = incremento % baseRepeticao
+
+            //console.log("incremento", incremento); //DEBUG  // incremento sempre de 1 em 1 e acompanha o frame
+            //console.log("base repeticao", baseRepeticao); //DEBUG  // base sempre 4 pq tem 4 tipos de movimentos
+            //console.log("frame", incremento % baseRepeticao);//DEBUG  //  quando o frame for 4 e a baseRepeticao 4 ele volta pra 0 pq os arrays movimentos comecam do zero
+            
+            //console.log(frames); //debug, aumenta o valor a cada quadro por segundo para 
+            }
+        
+
+
+        },
     
         desenha(){ //funcao dentro do objeto = "function desenha()" . a cada FPS ele chama o loop onde vai indicar o objeto e posicao 
+            flappyBird.atualizaOFrameAtual(); 
+            const  { spriteX, spriteY } = flappyBird.movimentos[flappyBird.frameAtual]; //extraindo os valores de movimento
+
             contexto.drawImage( 
                 sprites, 
-                flappyBird.spriteX, flappyBird.spriteY, // define a posicao inicial do passaro do arquivo sprites - sprite x, sprite y
+                spriteX, spriteY, // define a posicao inicial do passaro do arquivo sprites - sprite x, sprite y
                 flappyBird.largura, flappyBird.altura, //refere-se ao tamanho da area da imagem que eu quero (tamanho do recorte)
                 flappyBird.x, flappyBird.y,
                 flappyBird.largura, flappyBird.altura,
@@ -206,7 +244,131 @@ const messageGetReady = {   //objeto que representa o passaro conforme medidas d
    
 
 }
+//////////////======================================= [criaCanos]===============================////////////////////
 
+function criaCanos(){
+    const canos = {
+        largura: 52,
+        altura: 400,
+        chao: {
+            spriteX: 0,
+            spriteY: 169,
+        },
+        ceu: {
+            spriteX: 52,
+            spriteY: 169,
+        },
+        espaco: 80,
+        desenha() {
+            canos.pares.forEach(function(par){ //para cada par de canos que eu tenho eu desenho os valores abaixo
+
+                const yRandom = par.y; //valor de random, ambos dos canos irao aparecer dinamicamente na tela
+
+                const espacamentoEntreCanos = 90 ; // define o espacamento de um cano e outro
+
+                const canoCeuX = par.x; 
+                const canoCeuY = yRandom; //definindo cano de cima onde o 0 eh o topo
+
+                
+
+                //==========CANO DO CEU==========
+                contexto.drawImage( // desenhos o cano do ceu
+                    sprites,
+                    canos.ceu.spriteX, canos.ceu.spriteY,
+                    canos.largura, canos.altura,
+                    canoCeuX, canoCeuY,
+                    canos.largura, canos.altura,
+                )
+                //==========CANO DO CHAO==========
+                const canoChaoX = par.x;
+                const canoChaoY = canos.altura + espacamentoEntreCanos + yRandom; // define q o cano do chao vai comecar no final do cano cel + o valor que for definido em espacamentoEntreCanos (eh o espaco para o passaro passar)
+                contexto.drawImage( // desenhos o cano do chao
+                    sprites,
+                    canos.chao.spriteX, canos.chao.spriteY,
+                    canos.largura, canos.altura,
+                    canoChaoX, canoChaoY,
+                    canos.largura, canos.altura,
+            
+                )
+                par.canoCeu = {
+                    x: canoCeuX,
+                    y: canos.altura + canoCeuY
+                }
+                par.canoChao = {
+                    x: canoChaoX,
+                    y: canoChaoY
+                }                
+            })
+        },
+        
+        temColisaoComOFlappyBird(par) { //FUNCAO COLISAO COM CANOS
+            const cabecaDoFlappy = globais.flappyBird.y;
+            const peDoFlappy = globais.flappyBird.y + globais.flappyBird.altura;
+           
+           // console.log('Cabeça:', cabecaDoFlappy); //debug
+            //console.log('Pé:', peDoFlappy); //debug
+
+            if((globais.flappyBird.x + globais.flappyBird.largura) >= par.x) {
+               // console.log('Passou pela posição x do cano'); //debug
+
+                //console.log("invadiu area dos canos"); //debug
+                if(cabecaDoFlappy <= par.canoCeu.y){  // verificando se cabeca do passaro vai encostra no cano do ceu
+                    console.log('Cabeça do Flappy Bird colidiu com o cano superior'); //debug
+
+
+                    return true;
+                }
+
+                if(peDoFlappy >= par.canoChao.y){
+                    console.log('Pé do Flappy Bird colidiu com o cano inferior'); //debug
+ 
+                    return true
+                }
+            }
+            return false;
+
+        },
+        pares: [],  //lista de canos para serem atualizados na tela
+        atualiza() {
+            const passou100Frames = frames % 100 === 0; //resultado da divisao do frame atual o resto = 0
+
+            if(passou100Frames){ //se fpassou 100 frames eu vou adicionar mais um cano na lista de canos
+               console.log("passou 100 frames") ; // DEBUG
+               canos.pares.push({  //lista de canos para serem atualizados na tela
+                  
+                    x: canvas.width,
+                    y: -150 * (Math.random() + 1 ), //Math.random gera valores aleatorios // deixando numero aleatorio sempre maior que -150
+                });
+            }
+            canos.pares.forEach(function(par){ // pegar os pares desenhados e fazerem eles andarem na tela
+                par.x = par.x - 2 ; // vai andar 2 pixels a cada vez que atualizar a tela 
+                //console.log("teste") //debug
+
+
+               
+                if(canos.temColisaoComOFlappyBird(par)) {
+                    console.log('Você perdeu!'); //debug
+                    mudaParaTela(Telas.INICIO);
+
+                }
+                
+
+                if(par.x + canos.largura <= 0) { //limpando memoria user, apagando dados dos canos q ja passaram
+
+                    canos.pares.shift(); 
+                }
+                //console.log("Posição dos canos:", par.x, par.y); //debug
+
+
+            });
+
+        }
+
+        
+    }
+
+    return canos;
+}
 
 //////////////======================================= [Telas]===============================////////////////////
 
@@ -225,16 +387,24 @@ function mudaParaTela(novaTela){ // funcao que vai mudar a tela
 const Telas = {    // a tela contem as coisas que atualizam nela
     INICIO: { //OBJETO DENTRO DA TELA DE INICIO
         inicializa(){ //
+            
             globais.flappyBird = criaFlappyBird();  //acessa 
             globais.chao = criaChao();
+            globais.canos = criaCanos(); //funcao que vai criar um objeto na tela para ter o controle de atualizar e fazer mover
+            //console.log ("cria canos", criaCanos); //debug
         },
 
 
         desenha() {
             planoDeFundo.desenha();
-            globais.chao.desenha();
+            
             globais.flappyBird.desenha();
-            messageGetReady.desenha();
+
+            globais.chao.desenha();
+            
+            //console.log ("cria canos", canos.desenha); //debug
+            
+            messageGetReady.desenha(); // mensagem de inicio do jogo
         },
 
         click(){ // faz com que haja a troca da tela conforme click na tela
@@ -244,6 +414,7 @@ const Telas = {    // a tela contem as coisas que atualizam nela
 
         atualiza() {
             globais.chao.atualiza();
+            
             
         }
 
@@ -256,6 +427,7 @@ const Telas = {    // a tela contem as coisas que atualizam nela
 Telas.Jogo = { // o jogo contem as coisas que atualizam nele
     desenha(){
         planoDeFundo.desenha();
+        globais.canos.desenha();
         globais.chao.desenha();
         globais.flappyBird.desenha();
 
@@ -267,9 +439,10 @@ Telas.Jogo = { // o jogo contem as coisas que atualizam nele
     },
 
     atualiza() {
-        globais.flappyBird.atualiza();
+        globais.canos.atualiza();
         globais.chao.atualiza();
-
+        globais.flappyBird.atualiza();
+       // globais.placar.atualiza();
     }
 };
 
@@ -284,7 +457,8 @@ function loop() {
    
     telaAtiva.desenha(); //loop vai acessar variavel telaAtiva e vai passar a considerar qual desenho do atualiza q ele vai considerar
     telaAtiva.atualiza();
-
+    
+    frames = frames + 1; //soma a cada fps do jogo
     requestAnimationFrame(loop); //o request vai chamar
 
 
