@@ -370,6 +370,24 @@ function criaCanos(){
     return canos;
 }
 
+
+function criaPlacar() { // config placar
+    const placar = {
+        pontuacao: 0 ,
+        atualiza() {
+            contexto.font = '50px serif "VT323" ';
+            contexto.fullStyle = 'white';
+            contexto.fillText(`Hello world ${ placar.pontuacao }` , 50, 90); //rendereizando
+            
+
+        },
+        desenha() {
+
+        }
+    }
+    return placar;
+}
+
 //////////////======================================= [Telas]===============================////////////////////
 
 const globais = {}; //globais eh objeto
@@ -425,11 +443,15 @@ const Telas = {    // a tela contem as coisas que atualizam nela
 
 //////////////======================================= [Telas JOGO]===============================////////////////////
 Telas.Jogo = { // o jogo contem as coisas que atualizam nele
+    inicializa(){
+        globais.placar = criaPlacar(); //funcao construtor que cria um onjeto que vai ser atualizado a cada ciclo x
+    },
     desenha(){
         planoDeFundo.desenha();
         globais.canos.desenha();
         globais.chao.desenha();
         globais.flappyBird.desenha();
+        globais.placar.desenha();
 
     },
 
@@ -442,7 +464,7 @@ Telas.Jogo = { // o jogo contem as coisas que atualizam nele
         globais.canos.atualiza();
         globais.chao.atualiza();
         globais.flappyBird.atualiza();
-       // globais.placar.atualiza();
+        globais.placar.atualiza();
     }
 };
 
