@@ -369,6 +369,7 @@ function criaCanos(){
 
     return canos;
 }
+//////////////======================================= [PLACAR]===============================////////////////////
 
 
 function criaPlacar() { // config placar
