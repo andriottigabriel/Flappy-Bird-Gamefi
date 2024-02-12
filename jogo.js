@@ -264,7 +264,7 @@ function criaCanos(){
 
                 const yRandom = par.y; //valor de random, ambos dos canos irao aparecer dinamicamente na tela
 
-                const espacamentoEntreCanos = 90 ; // define o espacamento de um cano e outro
+                const espacamentoEntreCanos = 110 ; // define o espacamento de um cano e outro
 
                 const canoCeuX = par.x; 
                 const canoCeuY = yRandom; //definindo cano de cima onde o 0 eh o topo
