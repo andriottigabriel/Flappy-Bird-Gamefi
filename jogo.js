@@ -154,7 +154,7 @@ function criaFlappyBird(){ //criado funcao flappy bird para sempre que reiniciar
 
                 }, 500);
     
-                mudaParaTela(Telas.INICIO) //quando tiver a colisao ele muda para tela inicio para iniciar o jogo novamente
+                mudaParaTela(Telas.GAME_OVER) //quando tiver a colisao ele muda para tela inicio para iniciar o jogo novamente
                 return; //return para que o codigo de baixo n'ao seja mais executado
             }
     
@@ -244,6 +244,32 @@ const messageGetReady = {   //objeto que representa o passaro conforme medidas d
    
 
 }
+
+///////////////////===================================  MessageGameOver  ========================================///////////
+// [MessageGameOver]
+
+const messageGameOver = {   //objeto que representa o passaro conforme medidas de pixels em cima da imagem sprites
+
+    spriteX: 134,
+    spriteY: 153,
+    largura: 226,
+    altura: 200,
+    x: (canvas.width / 2) -226 / 2 ,
+    y: 50,
+    desenha(){ //funcao dentro do objeto = "function desenha()" . a cada FPS ele chama o loop onde vai indicar o objeto e posicao 
+        contexto.drawImage( 
+            sprites, 
+            messageGameOver.spriteX, messageGameOver.spriteY, // define a posicao inicial do passaro do arquivo sprites - sprite x, sprite y
+            messageGameOver.largura, messageGameOver.altura, //refere-se ao tamanho da area da imagem que eu quero (tamanho do recorte)
+            messageGameOver.x, messageGameOver.y,
+            messageGameOver.largura, messageGameOver.altura,
+        
+        );
+
+    }
+   
+
+}
 //////////////======================================= [criaCanos]===============================////////////////////
 
 function criaCanos(){
@@ -308,7 +334,7 @@ function criaCanos(){
            // console.log('Cabeça:', cabecaDoFlappy); //debug
             //console.log('Pé:', peDoFlappy); //debug
 
-            if((globais.flappyBird.x + globais.flappyBird.largura) >= par.x) {
+            if((globais.flappyBird.x + globais.flappyBird.largura -4) >= par.x ) {
                // console.log('Passou pela posição x do cano'); //debug
 
                 //console.log("invadiu area dos canos"); //debug
@@ -348,7 +374,9 @@ function criaCanos(){
                
                 if(canos.temColisaoComOFlappyBird(par)) {
                     console.log('Você perdeu!'); //debug
-                    mudaParaTela(Telas.INICIO);
+                    som_HIT.play();
+                    mudaParaTela(Telas.GAME_OVER);
+                    
 
                 }
                 
@@ -375,14 +403,22 @@ function criaCanos(){
 function criaPlacar() { // config placar
     const placar = {
         pontuacao: 0 ,
-        atualiza() {
-            contexto.font = '50px serif "VT323" ';
-            contexto.fullStyle = 'white';
-            contexto.fillText(`Hello world ${ placar.pontuacao }` , 50, 90); //rendereizando
+        desenha() {
+            contexto.font = '25px "VT323" ';
+            contexto.textAlign = "right"//alinhando texto a direita
+            contexto.fillStyle = 'black';
+            contexto.fillText(`SCORE ${placar.pontuacao}`, canvas.width -10, 35); // canvas.width pega a medida da tela; rendereizando
             
 
         },
-        desenha() {
+        atualiza() {
+            const intervaloDeFrame = 20; // A cada 10 frames eu indico qual movimento do passaro que quero
+            const passouOIntervalo = frames % intervaloDeFrame === 0; // frames pelo modulo(%) pelo intervaloDeFrames // limitando o numero// ===0 para limitar
+           
+            if (passouOIntervalo){
+                placar.pontuacao = placar.pontuacao + 1;
+
+            }
 
         }
     }
@@ -471,7 +507,17 @@ Telas.Jogo = { // o jogo contem as coisas que atualizam nele
 
 
 
-
+Telas.GAME_OVER = {
+    desenha() {
+      messageGameOver.desenha();
+    },
+    atualiza() {
+      
+    },
+    click() {
+      mudaParaTela(Telas.INICIO);
+    }
+  }
 
 
 
