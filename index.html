@@ -6,11 +6,100 @@
     <title>Flappy Bird - </title> <!-- Define o título da página exibido na guia do navegador -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    
+
    
+    <!-- css para o pop-up abaixo-->
+    <style>
+      /* Estilos para o pop-up de conexão com a carteira */
+      
+
+      /* Define o estilo para a camada de sobreposição, que cobre a tela inteira */
+      .overlay {
+          position: fixed; /* Posicionamento fixo para manter o pop-up no lugar enquanto a página rola */
+          top: 0; /* Distância do topo da janela de visualização */
+          left: 0; /* Distância da borda esquerda da janela de visualização */
+          width: 100%; /* Largura igual à largura da janela de visualização */
+          height: 100%; /* Altura igual à altura da janela de visualização */
+          background-color: rgba(0, 0, 0, 0.5); /* Cor de fundo semi-transparente */
+          display: flex; /* Exibe os elementos dentro do container como um flex container */
+          justify-content: center; /* Centraliza os itens horizontalmente */
+          align-items: center; /* Centraliza os itens verticalmente */
+      }
+
+      /* Define o estilo para o próprio pop-up */
+      .popup {
+          background-color: #a1ebff; /* Cor de fundo do pop-up */
+          padding: 20px; /* Espaçamento interno ao redor do conteúdo do pop-up */
+          border-radius: 10px; /* Borda arredondada */
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombra ao redor do pop-up */
+          text-align: center; /* Alinhamento do texto dentro do pop-up */
+      }
+
+      /* Define o estilo para o título do pop-up */
+      .popup h2 {
+          margin-bottom: 10px; /* Margem inferior para separar o título do conteúdo abaixo */
+      }
+
+      /* Define o estilo para o botão dentro do pop-up */
+      .popup button {
+          margin-top: 10px; /* Margem superior para separar o botão do conteúdo acima */
+          padding: 16px 60px; /* Espaçamento interno do botão */
+          border: none; /* Remove a borda do botão */
+          background-color: #007bff; /* Cor de fundo do botão */
+          color: #fff; /* Cor do texto do botão */
+          border-radius: 5px; /* Borda arredondada do botão */
+          cursor: pointer; /* Mostra o cursor como uma mão ao passar sobre o botão */
+      }
+  </style>
+
+
 
 </head>
 <body>
     <canvas id="game-canvas" width="320" height="480"></canvas> <!-- Define um elemento <canvas> com um ID de "game-canvas" e dimensões de largura 320px e altura 480px -->
+    
+    <!-- Pop-up de conexão com a carteira Metamask -->
+    <div class="overlay" id="overlay">
+      <div class="popup">
+          <h2 style="font-family: 'VT323'">Do you want to connect your wallet Metamask?</h2>
+
+
+
+          <button style="font-family: 'VT323'; font-size: 19px;" id="connect" onclick="conectarComWallet()">
+            Yes, connect wallet Metamask
+            <br>
+            <span style="font-family: 'VT323'; font-size: 10px;">Play to earn</span>
+          </button>
+          
+          <button id="no-play" style="font-family: 'VT323'; font-size: 19px;" onclick="fecharPopup()">
+            No, let's play
+            <br>
+            <span style="font-family: 'VT323'; font-size: 10px;">No save your score</span>
+          </button>
+          
+
+
+          <!--
+          <button style="font-family: 'VT323'; font-size: 19px;" onclick="conectarComWallet()">Yes, connect wallet Metamask
+             <p style="font-family: 'VT323'; font-size: 10px;"> Play to earn </p>
+          </button>
+        
+          
+          
+
+          <button id="no-play" style="font-family: 'VT323'; font-size: 19px;" onclick="fecharPopup()">No, let's play
+            <p style="font-family: 'VT323'; font-size: 10px;"> No save your score </p>
+          </button> -->
+
+
+      </div>
+  </div>
+
+  <script src="./jogo.js"></script>
+
+     
+    
     <style>
         /* Define estilos para o corpo da página */
         body {
@@ -27,6 +116,8 @@
         }
     </style>
 
-    <script src="./jogo.js"></script> <!-- Importa um arquivo de script externo chamado "jogo.js" -->
-</body>
+   
+
+
+  </body>
 </html>

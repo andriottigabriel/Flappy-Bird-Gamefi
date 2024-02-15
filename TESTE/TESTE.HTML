@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conectar com Metamask</title>
+</head>
+<body>
+    <button id="connect">Conectar com Metamask</button>
+    <p id="walletAddress"></p>
+
+    <script>
+        document.getElementById('connect').addEventListener('click', () => {
+            if (typeof window.ethereum !== 'undefined') {
+                console.log('Metamask está instalada!');
+                
+                window.ethereum
+                    .request({ method: 'eth_requestAccounts' })
+                    .then(accounts => {
+                        if (accounts.length > 0) { // Verifica se há pelo menos uma conta
+                            console.log('Contas do usuário:', accounts);
+                            const walletAddress = accounts[0];
+                            document.getElementById('walletAddress').innerText = walletAddress;
+                            // Aqui você pode executar outras operações que exigem a conta do usuário
+                        } else {
+                            console.log('Nenhuma conta foi conectada.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao solicitar conta do usuário:', error);
+                    });
+            } else {
+                console.log('Por favor, instale a Metamask para utilizar este aplicativo.');
+            }
+        });
+    </script>
+</body>
+</html>

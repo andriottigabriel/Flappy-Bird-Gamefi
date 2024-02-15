@@ -1,3 +1,136 @@
+
+//import { ethers } from 'ethers'; // Importando a biblioteca ethers para comunicação entre a carteira e o contrato
+
+
+function conectarComWallet() { 
+    btnLoginClick = true;
+    console.log("Conectando com a carteira Metamask...");
+
+    
+   
+
+        // Verificar se o MetaMask está instalado
+    if (typeof window.ethereum !== 'undefined') {
+        console.log("testee");
+        const ethereumButton = document.getElementById('connectButton');
+        
+        ethereumButton.addEventListener('click', async () => {
+            try {
+                // Solicitar acesso à carteira MetaMask
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                
+                // Conta conectada com sucesso
+                const accounts = await ethereum.request({ method: 'eth_accounts' });
+                alert('Conectado com sucesso com a conta ' + accounts[0]);
+            } catch (error) {
+                // O usuário rejeitou o acesso
+                alert('Por favor, conecte-se à MetaMask para continuar.');
+                console.error(error);
+            }
+        });
+    } 
+    else {
+        alert('Por favor, instale o MetaMask para acessar este recurso!');
+    }
+
+}
+
+
+function btnLoginClick (){
+
+    
+
+}
+
+
+
+
+
+/*async function conectarComWallet() {
+    try {
+        // Verificar se o usuário possui uma carteira Metamask ativa
+        if (!window.ethereum) {
+            throw new Error("No Wallet found!");
+        }
+
+        console.log("Conectando com a carteira Metamask...");
+
+        // Pedir permissão ao usuário para acessar sua conta Ethereum
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+        // Criar um provedor de ethers usando a carteira Metamask do navegador
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+        // Retornar o provedor de ethers
+        return provider;
+    } catch (error) {
+        console.error('Erro ao conectar com a carteira:', error);
+        setMessage("Erro ao conectar com a carteira: " + error.message); // Definir mensagem de erro
+    }
+}
+
+// Chamada da função
+conectarComWallet()
+    .then(provider => {
+        if (provider) {
+            // Aqui você pode colocar o código que precisa ser executado após a conexão com a carteira
+            console.log('Conexão bem-sucedida!');
+        } else {
+            // Lidar com o caso em que não foi possível conectar com a carteira
+            console.log('Não foi possível conectar com a carteira.');
+        }
+    })
+    .catch(error => {
+        // Lidar com erros que podem ocorrer durante a conexão com a carteira
+        console.error('Erro ao conectar com a carteira:', error);
+    });
+*/
+
+
+
+/*function conectarComWallet() { //declarando variavel
+    // Coloque o código para se conectar à carteira Metamask aqui
+    //btnLoginClick = true;
+    console.log("Conectando com a carteira Metamask..."); //debug*/
+
+//============================== funcao pop-up BOTAO NO LET`S PLAY==================================================
+
+let jogoIniciadoSemCarteira = false; // Variável para controlar se o jogo foi iniciado
+
+function fecharPopup() { // Função para fechar o pop-up caso aperte NO LET`S PLAY
+    const overlay = document.getElementById('overlay');
+    overlay.style.display = 'none'; // Esconde o pop-up definindo seu estilo de exibição como 'none'
+    jogoIniciadoSemCarteira = true; // Define que o jogo foi iniciado sem o pop-up
+    console.log("Pop-up fechado"); //debug
+    
+} 
+
+// Adiciona um event listener para o clique na janela
+window.addEventListener("click", function(event) {
+    // Verifica se o jogo foi iniciado sem o pop-up e se o clique não foi no pop-up
+    if (jogoIniciadoSemCarteira && event.target.id !== 'overlay') {
+             
+        console.log("Clique válido após o fechamento do pop-up"); //debug
+        // ação a ser executada após fechar o pop-up:
+    
+        window.addEventListener("click",function(){ // verifica quando houve click na janela do navegador; function cada tela tem um tipo de comportamento
+            if(telaAtiva.click){
+                telaAtiva.click();
+            }
+        });
+    }
+});
+
+/////// utilizando o click sem o pop up
+/*window.addEventListener("click", function() {
+    if (jogoIniciadoSemCarteira && telaAtiva.click) {
+        telaAtiva.click();
+        console.log("ver se entrou ");
+    }
+});*/
+      
+
+//================================GAME COMPLETO====================================================================
 console.log("Flappy Bird Gamefi")
 
 let frames = 0; //declarando como 0
@@ -266,6 +399,8 @@ const messageGameOver = {   //objeto que representa o passaro conforme medidas d
         
         );
 
+        
+
     }
    
 
@@ -397,6 +532,11 @@ function criaCanos(){
 
     return canos;
 }
+
+
+
+
+
 //////////////======================================= [PLACAR]===============================////////////////////
 
 
@@ -408,6 +548,14 @@ function criaPlacar() { // config placar
             contexto.textAlign = "right"//alinhando texto a direita
             contexto.fillStyle = 'black';
             contexto.fillText(`SCORE ${placar.pontuacao}`, canvas.width -10, 35); // canvas.width pega a medida da tela; rendereizando
+            
+
+        },
+        desenhaPlacarFinal() {
+            contexto.font = '30px "VT323" ';
+            contexto.textAlign = "right"//alinhando texto a direita
+            contexto.fillStyle = 'black';
+            contexto.fillText(`${placar.pontuacao}`, canvas.width -80, 146); // canvas.width pega a medida da tela; rendereizando
             
 
         },
@@ -424,6 +572,7 @@ function criaPlacar() { // config placar
     }
     return placar;
 }
+
 
 //////////////======================================= [Telas]===============================////////////////////
 
@@ -461,7 +610,7 @@ const Telas = {    // a tela contem as coisas que atualizam nela
             
             messageGetReady.desenha(); // mensagem de inicio do jogo
         },
-
+        
         click(){ // faz com que haja a troca da tela conforme click na tela
             mudaParaTela(Telas.Jogo);
 
@@ -481,7 +630,7 @@ const Telas = {    // a tela contem as coisas que atualizam nela
 //////////////======================================= [Telas JOGO]===============================////////////////////
 Telas.Jogo = { // o jogo contem as coisas que atualizam nele
     inicializa(){
-        globais.placar = criaPlacar(); //funcao construtor que cria um onjeto que vai ser atualizado a cada ciclo x
+        globais.placar = criaPlacar(); //funcao construtor que cria um objeto que vai ser atualizado a cada ciclo x
     },
     desenha(){
         planoDeFundo.desenha();
@@ -491,7 +640,7 @@ Telas.Jogo = { // o jogo contem as coisas que atualizam nele
         globais.placar.desenha();
 
     },
-
+    
     click(){ // faz com que haja a troca da tela conforme click na tela
         globais.flappyBird.pula();
 
@@ -509,7 +658,10 @@ Telas.Jogo = { // o jogo contem as coisas que atualizam nele
 
 Telas.GAME_OVER = {
     desenha() {
+     
       messageGameOver.desenha();
+      globais.placar.desenhaPlacarFinal();
+      
     },
     atualiza() {
       
@@ -532,13 +684,68 @@ function loop() {
 
 
 }
-    
+
+
+////================================ TESTE IDENTIFICANDO POPUP FECHADO PARA INICIAR O JOGO ====================================================================
+  
+/*window.addEventListener("click", function() { //VERIFICAR SE O POP UP ESTA FECHADO PARA PODER INICIAR O JOGO
+    const overlay = document.getElementById('overlay');
+    if (!overlay.style.display || overlay.style.display === 'none') { // Verifica se o pop-up não está visível
+      if (telaAtiva.click) {
+        telaAtiva.click();
+        console.log("ver se entrou ");
+      }
+    }
+  }); */
+
+
+/*window.addEventListener("click", function() {
+    if (jogoIniciadoSemCarteira && telaAtiva.click) {
+        telaAtiva.click();
+        console.log("ver se entrou ");
+    }
+});*/
+
+
+  
+
+
+/////======================================================FIM==================================================
+
+
+
+/*//[SEM POP-UP]
 window.addEventListener("click",function(){ // verifica quando houve click na janela do navegador; function cada tela tem um tipo de comportamento
     if(telaAtiva.click){
         telaAtiva.click();
-        
+        console.log("simiu pop up");
+            
+            
+            
     }
-});
+}); */
+
+
+
 
 mudaParaTela(Telas.INICIO);
 loop(); //executando a funcao
+
+//================================ FECHAR POP-UP ====================================================================
+
+//COM POP-UP    
+
+
+/*if (contadorPopUp = true){
+    window.addEventListener("click", function() { //VERIFICAR SE O POP UP ESTA FECHADO PARA PODER INICIAR O JOGO
+        const overlay = document.getElementById('overlay');
+        if (!overlay.style.display || overlay.style.display === 'none') { // Verifica se o pop-up não está visível
+        if (telaAtiva.click) {
+            telaAtiva.click();
+            //console.log(fecharPopup);
+        }
+        }
+    }); 
+}*/
+
+ 
