@@ -12,7 +12,7 @@ function conectarComWallet() {
         // Verificar se o MetaMask está instalado
     if (typeof window.ethereum !== 'undefined') {
         console.log("testee");
-        const ethereumButton = document.getElementById('connectButton');
+        const ethereumButton = document.getElementById('connect');
         
         ethereumButton.addEventListener('click', async () => {
             try {
